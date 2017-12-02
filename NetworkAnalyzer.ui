@@ -59,6 +59,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_3">
+          <property name="toolTip">
+           <string>Apply filter</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -275,6 +278,7 @@
      <string>File</string>
     </property>
     <addaction name="actionExit_2"/>
+    <addaction name="actionExit_3"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -341,7 +345,7 @@
   </action>
   <action name="actionExit_2">
    <property name="text">
-    <string>Exit</string>
+    <string>Save</string>
    </property>
   </action>
   <action name="startCaptureBtn">
@@ -362,7 +366,15 @@
      <normaloff>stop.png</normaloff>stop.png</iconset>
    </property>
    <property name="text">
-    <string>stop capture</string>
+    <string>Stop capture</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop capture</string>
+   </property>
+  </action>
+  <action name="actionExit_3">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>
