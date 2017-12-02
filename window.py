@@ -13,7 +13,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-
+        self.setWindowState(QtCore.Qt.WindowMaximized)
         self.startCaptureBtn.triggered.connect(lambda:self.startCaptureBtnClicked(self.startCaptureBtn))
         self.stopCaptureBtn.triggered.connect(lambda:self.stopCaptureBtnClicked(self.stopCaptureBtn))
 
