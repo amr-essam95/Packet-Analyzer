@@ -2,22 +2,62 @@ import PyQt4
 from PyQt4 import QtGui, QtCore,uic
 import socket
 import sys
+import threading
+import time
+####################################################################
+class ThreadingClass(QtCore.QThread):
 
+  """ Threading example class
+  The run() method will be started and it will run in the background
+  until the application exits.
+  """
+  def __init__(self, interval=1):
+    """ Constructor
+    :type interval: int
+    :param interval: Check interval, in seconds
+    """
+    QtCore.QThread.__init__(self, parent=None)
+    #threading.Thread.__init__(self, *args, **kwargs)
+    self.interval = interval
+    thread = threading.Thread(target=self.run, args=())
+    self.signal = QtCore.SIGNAL("signal")
+    thread.daemon = True # Daemonize thread
+    #thread.start() # Start the execution
+    #print("thread started")
+    self._stop_event = threading.Event()
+  def run(self):
+    """ Method that runs forever """
+
+    while True:
+        #print("thread running")  #to test run function
+        time.sleep(self.interval)
+        #packet= self.getPacket()
+        #window.addPacket(packet)
+    #def getPacket():
+        pass
+  def stop(self):
+    window.thread.terminate()
+    #print("thread stopped")  #to test stop function
+
+#################################################################
 
 qtCreatorFile="NetworkAnalyzer.ui"
 Ui_MainWindow,QtBaseClass = uic.loadUiType(qtCreatorFile) 
 
 ###############################
 class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
-	def __init__(self, parent=None):
-		QtGui.QMainWindow.__init__(self)
-		Ui_MainWindow.__init__(self)
-		self.setupUi(self)
-		self.setWindowState(QtCore.Qt.WindowMaximized)
-		self.startCaptureBtn.triggered.connect(lambda:self.startCaptureBtnClicked(self.startCaptureBtn))
-		self.stopCaptureBtn.triggered.connect(lambda:self.stopCaptureBtnClicked(self.stopCaptureBtn))
-		self.packetList=[]
-		self.filter=""
+
+    def __init__(self, parent=None):
+        QtGui.QMainWindow.__init__(self)
+        Ui_MainWindow.__init__(self)
+        self.setupUi(self)
+        self.setWindowState(QtCore.Qt.WindowMaximized)
+        self.startCaptureBtn.triggered.connect(lambda:self.startCaptureBtnClicked(self.startCaptureBtn))
+        self.stopCaptureBtn.triggered.connect(lambda:self.stopCaptureBtnClicked(self.stopCaptureBtn))
+        self.packetList=[]
+        self.filter=""
+        self.thread = ThreadingClass()
+
 ######################################################
 	def startCaptureBtnClicked(self,btn):
 	  
@@ -36,11 +76,13 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.startCaptureBtn.setEnabled(True)
 		self.stopCaptureBtn.setEnabled(False)   
 #########################################################
-	def startCapture(self):
-		pass
+    def startCapture(self):
+        self.thread.start()
+        pass
 #########################################################
-	def stopCapture(self):
-		pass
+    def stopCapture(self):
+        self.thread.stop()
+        pass
 #########################################################
 	def addEntry(self):
 		pass
@@ -82,36 +124,10 @@ window = MyWindow()
 window.show()
 app.exec_()
 ##########################################################
-import threading
-import time
-class ThreadingClass(QtCore.QThread):
 
-	""" Threading example class
-	The run() method will be started and it will run in the background
-	until the application exits.
-	"""
-	def __init__(self, interval=1):
-		""" Constructor
-		:type interval: int
-		:param interval: Check interval, in seconds
-		"""
-		QtCore.QThread.__init__(self, parent=None)
-		#threading.Thread.__init__(self, *args, **kwargs)
-		self.interval = interval
-		thread = threading.Thread(target=self.run, args=())
-		self.signal = QtCore.SIGNAL("signal")
-		thread.daemon = True # Daemonize thread
-		thread.start() # Start the execution
-	def run(self):
-		""" Method that runs forever """
-		while True:
-			time.sleep(self.interval)
-			packet= self.getPacket()
-			window.addPacket(packet)
-	def getPacket(self):
-		pass
 
-thread = ThreadingClass()
+#thread = ThreadingClass()
 ##############################################################
+
 
 
