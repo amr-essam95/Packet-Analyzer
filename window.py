@@ -24,7 +24,7 @@ class ThreadingClass(QtCore.QThread):
 		#thread.start() # Start the execution
 		#print("thread started")
 		self._stop_event = threading.Event()
-  	def run(self):
+	def run(self):
 		""" Method that runs forever """
 		while True:
 			#print("thread running")  #to test run function
@@ -33,7 +33,7 @@ class ThreadingClass(QtCore.QThread):
 			window.addPacket(packet)
 	def getPacket(self):
 		pass
-  	def stop(self):
+	def stop(self):
 		window.thread.terminate()
 		#print("thread stopped")  #to test stop function
 #################################################################
@@ -56,7 +56,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 ######################################################
 	def startCaptureBtnClicked(self,btn):
 		if(self.stackedWidget.currentIndex()==0):
-			#assure that connextion is selected and send it to thread
+			#assure that connection is selected and send it to thread
 			self.startCapture()
 			self.stackedWidget.setCurrentIndex(1)
 			self.startCaptureBtn.setEnabled(False)
@@ -84,15 +84,16 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.addPacketToTable(packet)
 #########################################################
 	def addPacketToTable(self,packet):
-		self.tableSize += 1
-		self.table.insertRow(self.size)
-		self.table.setItem(self.size,0, QtGui.QTableWidgetItem(str(packet['No.'])))
-		self.table.setItem(self.size,1, QtGui.QTableWidgetItem(str(packet['Time'])))
-		self.table.setItem(self.size,2, QtGui.QTableWidgetItem(str(packet['Source'])))
-		self.table.setItem(self.size,3, QtGui.QTableWidgetItem(str(packet['Destination'])))
-		self.table.setItem(self.size,4, QtGui.QTableWidgetItem(str(packet['Protocol'])))
-		self.table.setItem(self.size,5, QtGui.QTableWidgetItem(str(packet['Length'])))
-		self.table.setItem(self.size,6, QtGui.QTableWidgetItem(str(packet['Info'])))
+		if packet!=None:
+			self.tableSize += 1
+			self.table.insertRow(self.tableSize)
+			self.table.setItem(self.tableSize,0, QtGui.QTableWidgetItem(str(packet['No.'])))
+			self.table.setItem(self.tableSize,1, QtGui.QTableWidgetItem(str(packet['Time'])))
+			self.table.setItem(self.tableSize,2, QtGui.QTableWidgetItem(str(packet['Source'])))
+			self.table.setItem(self.tableSize,3, QtGui.QTableWidgetItem(str(packet['Destination'])))
+			self.table.setItem(self.tableSize,4, QtGui.QTableWidgetItem(str(packet['Protocol'])))
+			self.table.setItem(self.tableSize,5, QtGui.QTableWidgetItem(str(packet['Length'])))
+			self.table.setItem(self.tableSize,6, QtGui.QTableWidgetItem(str(packet['Info'])))
 #########################################################
 	def passFilter(self,packet):
 		if (self.filter==""):#if there is no filter
@@ -114,6 +115,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.treeWidget.clear()
 		for key, value in packet['Description'].iteritems():
 			#fill the tree
+			pass
 #########################################################
 	def showPacketHexadecimal(self,packet):
 		self.plainTextEdit.setText(packet['Hexa'])

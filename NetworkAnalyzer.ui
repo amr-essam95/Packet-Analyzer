@@ -58,7 +58,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="applyFIlterBtn">
           <property name="toolTip">
            <string>Apply filter</string>
           </property>
@@ -67,7 +67,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../.designer/backup/filter.png</normaloff>../../.designer/backup/filter.png</iconset>
+            <normaloff>filter.png</normaloff>filter.png</iconset>
           </property>
          </widget>
         </item>
@@ -195,18 +195,18 @@
           </column>
           <item>
            <property name="text">
-            <string>Frame7: csdvsd</string>
+            <string>Frame7: </string>
            </property>
            <item>
             <property name="text">
-             <string>kfvkmsd</string>
+             <string>Containg the data in the frame</string>
             </property>
            </item>
           </item>
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QTableWidget" name="tableWidget">
+         <widget class="QTableWidget" name="table">
           <column>
            <property name="text">
             <string>No.</string>
@@ -245,18 +245,7 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QTableWidget" name="tableWidget_2">
-          <row>
-           <property name="text">
-            <string>0000</string>
-           </property>
-          </row>
-          <column>
-           <property name="text">
-            <string/>
-           </property>
-          </column>
-         </widget>
+         <widget class="QPlainTextEdit" name="plainTextEdit"/>
         </item>
        </layout>
       </widget>
