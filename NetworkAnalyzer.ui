@@ -190,7 +190,7 @@
          <widget class="QTreeWidget" name="treeWidget">
           <column>
            <property name="text">
-            <string/>
+            <string>Description</string>
            </property>
           </column>
           <item>
@@ -207,11 +207,6 @@
         </item>
         <item row="0" column="0">
          <widget class="QTableWidget" name="table">
-          <column>
-           <property name="text">
-            <string>No.</string>
-           </property>
-          </column>
           <column>
            <property name="text">
             <string>Time</string>

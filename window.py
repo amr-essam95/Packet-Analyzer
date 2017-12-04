@@ -10,7 +10,7 @@ class ThreadingClass(QtCore.QThread):
 	The run() method will be started and it will run in the background
 	until the method stop is called.
 	"""
-	def __init__(self, interval=1):
+	def __init__(self, interval=5):
 		""" Constructor
 		:type interval: int
 		:param interval: Check interval, in seconds
@@ -32,7 +32,7 @@ class ThreadingClass(QtCore.QThread):
 			packet= self.getPacket()
 			window.addPacket(packet)
 	def getPacket(self):
-		pass
+		return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa"},"Hexa":"00 55 66"}
 	def stop(self):
 		window.thread.terminate()
 		#print("thread stopped")  #to test stop function
@@ -52,6 +52,9 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.packetList=[]
 		self.filter=""
 		self.tableSize=0
+		header = self.table.horizontalHeader()
+		header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
+		header.setStretchLastSection(True)
 		self.thread = ThreadingClass()
 ######################################################
 	def startCaptureBtnClicked(self,btn):
@@ -85,15 +88,19 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 	def addPacketToTable(self,packet):
 		if packet!=None:
-			self.tableSize += 1
+			print "entered add packet to table"
+			print "the packet is "+str(packet)
 			self.table.insertRow(self.tableSize)
-			self.table.setItem(self.tableSize,0, QtGui.QTableWidgetItem(str(packet['No.'])))
-			self.table.setItem(self.tableSize,1, QtGui.QTableWidgetItem(str(packet['Time'])))
-			self.table.setItem(self.tableSize,2, QtGui.QTableWidgetItem(str(packet['Source'])))
-			self.table.setItem(self.tableSize,3, QtGui.QTableWidgetItem(str(packet['Destination'])))
-			self.table.setItem(self.tableSize,4, QtGui.QTableWidgetItem(str(packet['Protocol'])))
-			self.table.setItem(self.tableSize,5, QtGui.QTableWidgetItem(str(packet['Length'])))
-			self.table.setItem(self.tableSize,6, QtGui.QTableWidgetItem(str(packet['Info'])))
+			self.table.setVerticalHeaderItem(self.tableSize, QtGui.QTableWidgetItem(str(packet["No."])))
+			#self.table.setItem(self.tableSize,0, QtGui.QTableWidgetItem(str(packet['No.'])))
+			self.table.setItem(self.tableSize,0, QtGui.QTableWidgetItem(str(packet['Time'])))
+			self.table.setItem(self.tableSize,1, QtGui.QTableWidgetItem(str(packet['Source'])))
+			self.table.setItem(self.tableSize,2, QtGui.QTableWidgetItem(str(packet['Destination'])))
+			self.table.setItem(self.tableSize,3, QtGui.QTableWidgetItem(str(packet['Protocol'])))
+			self.table.setItem(self.tableSize,4, QtGui.QTableWidgetItem(str(packet['Length'])))
+			self.table.setItem(self.tableSize,5, QtGui.QTableWidgetItem(str(packet['Info'])))
+			#self.table.resizeColumnsToContents()
+			self.tableSize += 1
 #########################################################
 	def passFilter(self,packet):
 		if (self.filter==""):#if there is no filter
