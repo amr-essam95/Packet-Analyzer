@@ -10,7 +10,7 @@ class ThreadingClass(QtCore.QThread):
 	The run() method will be started and it will run in the background
 	until the method stop is called.
 	"""
-	def __init__(self, interval=5):
+	def __init__(self, interval=1):
 		""" Constructor
 		:type interval: int
 		:param interval: Check interval, in seconds
@@ -32,7 +32,7 @@ class ThreadingClass(QtCore.QThread):
 			packet= self.getPacket()
 			window.addPacket(packet)
 	def getPacket(self):
-		return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa"},"Hexa":"00 55 66"}
+		return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66"}
 	def stop(self):
 		window.thread.terminate()
 		#print("thread stopped")  #to test stop function
@@ -49,6 +49,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.startCaptureBtn.triggered.connect(lambda:self.startCaptureBtnClicked(self.startCaptureBtn))
 		self.stopCaptureBtn.triggered.connect(lambda:self.stopCaptureBtnClicked(self.stopCaptureBtn))
 		self.actionExitBtn.triggered.connect(lambda:self.exitBtnClicked(self.actionExitBtn))
+		self.saveBtn.triggered.connect(lambda:self.saveBtnClicked(self.saveBtn))
 		self.packetList=[]
 		self.filter=""
 		self.tableSize=0
@@ -76,6 +77,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 	def startCapture(self):
 		self.thread.start()
+		self.saveBtn.setEnabled(True)
 #########################################################
 	def stopCapture(self):
 		self.thread.stop()
