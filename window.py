@@ -4,6 +4,7 @@ import socket
 import sys
 import threading
 import time
+import PacketCapture2 as capture
 ####################################################################
 class ThreadingClass(QtCore.QThread):
 	""" Threading example class
@@ -27,11 +28,13 @@ class ThreadingClass(QtCore.QThread):
 
 	def run(self):
 		""" Method that runs forever """
-		while True:
+		# while True:
 			#print("thread running")  #to test run function
-			time.sleep(self.interval)
-			packet= self.getPacket()
-			window.addPacket(packet)
+		# time.sleep(self.interval)
+		# packet= self.getPacket()
+		# window.addPacket(packet)
+		sniffer = capture.Sniffer(window = window)
+		sniffer.snif()
 	def getPacket(self):
 		return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66"}
 	def stop(self):

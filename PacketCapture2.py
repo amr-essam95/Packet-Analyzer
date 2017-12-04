@@ -1,7 +1,6 @@
 import scapy.all as scapy
-import sys,re
+import sys,re,json
 from time import gmtime, strftime
-strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
 """
 protocol need to be in string not number
@@ -20,12 +19,15 @@ class Sniffer(object):
 		self.iface = iface
 		self.counter = 0
 		self.window = window
+		self.file = open('x','w')
 
 	def snif(self):
 		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
 
 	def pkt_callback(self,pkt):
 		data =  self.pkt_parser(pkt)
+		self.file.write(json.dumps(data))
+
 		self.window.addPacket(data)
 
 	def content_parser(self,content):
@@ -58,11 +60,11 @@ class Sniffer(object):
 		if "IP" in pkt:
 			data["Source"] = pkt["IP"].src
 			data["Destination"] = pkt["IP"].dst
-			data["protocol"] =  pkt["IP"].proto
+			data["Protocol"] =  str(pkt["IP"].proto)
 		else:
-			data["Source"] = " "
-			data["Destination"] = " "
-			data["protocol"] = " "
+			data["Source"] = "-"
+			data["Destination"] = "-"
+			data["Protocol"] = "-"
 		data["Length"] = 0
 		data["Info"] = self.content_parser(content)
 		data["Hexa"]  = hex_output
@@ -78,8 +80,8 @@ iFace = None
 #file name.pcap to print in it 
 file_name="Mypackets"
 
-s = Sniffer(cnt,Filter,iFace)
-s.snif()
+# s = Sniffer(cnt,Filter,iFace)
+# s.snif()
 
 
 #for saving the packets sniffed to be viewed in wireshark or any same program
