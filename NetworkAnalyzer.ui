@@ -278,6 +278,7 @@
     </property>
     <addaction name="startCaptureBtn"/>
     <addaction name="stopCaptureBtn"/>
+    <addaction name="pauseCaptureBtn"/>
    </widget>
    <widget class="QMenu" name="menuCapture">
     <property name="title">
@@ -311,6 +312,7 @@
    </attribute>
    <addaction name="separator"/>
    <addaction name="startCaptureBtn"/>
+   <addaction name="pauseCaptureBtn"/>
    <addaction name="stopCaptureBtn"/>
    <addaction name="separator"/>
   </widget>
@@ -373,6 +375,18 @@
   <action name="actionExitBtn">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="pauseCaptureBtn">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>pause.png</normaloff>pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pause capture</string>
    </property>
   </action>
  </widget>

@@ -36,7 +36,7 @@ class ThreadingClass(QtCore.QThread):
 		sniffer = capture.Sniffer(window = window)
 		sniffer.snif()
 	def getPacket(self):
-		return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66"}
+		return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66\nsjvisdj vsdnkvs vjdsnvj dsjvjsdv jsdsd vds vjsd vjk djvsd jv sdjv msd vds dv k vks\n vdsv \n"}
 	def stop(self):
 		window.thread.terminate()
 		#print("thread stopped")  #to test stop function
@@ -54,13 +54,18 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.stopCaptureBtn.triggered.connect(lambda:self.stopCaptureBtnClicked(self.stopCaptureBtn))
 		self.actionExitBtn.triggered.connect(lambda:self.exitBtnClicked(self.actionExitBtn))
 		self.saveBtn.triggered.connect(lambda:self.saveBtnClicked(self.saveBtn))
+		self.pauseCaptureBtn.triggered.connect(lambda:self.pauseCaptureBtnClicked(self.pauseCaptureBtn))
 		self.packetList=[]
 		self.filter=""
 		self.tableSize=0
+		self.stopped=False
+		self.table.cellClicked.connect(self.cellCLicked)
 		header = self.table.horizontalHeader()
 		header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		header.setStretchLastSection(True)
 		self.thread = ThreadingClass()
+		#adjusting the filter
+		#when selected add both descriptions
 		#self.showPacketDescription(1)
 ######################################################
 	def startCaptureBtnClicked(self,btn):
@@ -70,17 +75,60 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.stackedWidget.setCurrentIndex(1)
 			self.startCaptureBtn.setEnabled(False)
 			self.stopCaptureBtn.setEnabled(True)
+			self.pauseCaptureBtn.setEnabled(True)
 		else:
+			if(self.stopped==True):
+				#message to confirm that he will lose the data if he didn't save session
+				msg = QtGui.QMessageBox()
+				msg.setIcon(QtGui.QMessageBox.Information)
+				msg.setText("Starting capture without saving will cause loss of last session data")
+				#msg.setInformativeText("By pressing ok the program will be closed")
+				msg.setWindowTitle("Starting capture")
+				#msg.setDetailedText("Are you sure dude?")
+				msg.setStandardButtons(QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+				msg.buttonClicked.connect(self.startNewCapture)
+				retval = msg.exec_()
+				if retval==QtGui.QMessageBox.Ok:
+					self.pauseCaptureBtn.setEnabled(True)
+					self.startCaptureBtn.setEnabled(False)
+					self.stopCaptureBtn.setEnabled(True)
+					self.startNewCapture("Ok")
+				return
+			self.pauseCaptureBtn.setEnabled(True)
 			self.startCaptureBtn.setEnabled(False)
 			self.stopCaptureBtn.setEnabled(True)
 			self.startCapture()
 #######################################################
+	def cellCLicked(self,row,column):
+		packet = [packet for packet in self.packetList if packet['No.'] == self.table.verticalHeaderItem(int(row)).text()][0]
+		#packet = packet[0]
+		self.showPacketDescription(packet)
+		self.showPacketHexadecimal(packet)
+		#find the packet
+		#packet show description
+		#packet show hexadecimal
+#######################################################
 	def stopCaptureBtnClicked(self,btn):      
 		self.stopCapture()
+		self.stopped=True
 		self.startCaptureBtn.setEnabled(True)
 		self.stopCaptureBtn.setEnabled(False)   
 #########################################################
+	def pauseCaptureBtnClicked(self,btn):      
+		self.stopCapture()
+		self.pauseCaptureBtn.setEnabled(False)
+		self.startCaptureBtn.setEnabled(True)
+		self.stopCaptureBtn.setEnabled(True)  
+#########################################################
+	def startNewCapture(self,btn):
+		if (btn=="Ok"):
+			self.packetList=[]
+			self.table.setRowCount(0)
+			self.tableSize=0
+			self.startCapture()
+#########################################################
 	def startCapture(self):
+		self.stopped=False
 		self.thread.start()
 		self.saveBtn.setEnabled(True)
 #########################################################
@@ -133,11 +181,11 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.treeWidget.addTopLevelItem(itemKey)
 			itemValue = QtGui.QTreeWidgetItem([value])
 			itemKey.addChild(itemValue)
-			#fill the tree
-			pass
+			
 #########################################################
 	def showPacketHexadecimal(self,packet):
-		self.plainTextEdit.setText(packet['Hexa'])
+		self.plainTextEdit.clear()
+		self.plainTextEdit.appendPlainText(packet['Hexa'])
 #########################################################
 	def applyFilterClicked(self,btn):
 		newFilter=self.filterLineEdit.text
@@ -159,12 +207,13 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		msg.setWindowTitle("Exit Window")
 		msg.setDetailedText("Are you sure dude?")
 		msg.setStandardButtons(QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
-		msg.buttonClicked.connect(self.exitProgram)
+		#msg.buttonClicked.connect(self.exitProgram)
 		retval = msg.exec_()
 		if retval==QtGui.QMessageBox.Ok:
-			self.exitProgram
+			self.exitProgram("ok")
 #########################################################
 	def exitProgram(self,buttonPressed):
+		if buttonPressed =="ok":
 			sys.exit()
 #########################################################
 app = QtGui.QApplication(sys.argv)
