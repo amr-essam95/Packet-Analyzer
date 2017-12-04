@@ -4,7 +4,7 @@ import socket
 import sys
 import threading
 import time
-import PacketCapture2 as capture
+import sniffer as capture
 ####################################################################
 class ThreadingClass(QtCore.QThread):
 	""" Threading example class
@@ -95,8 +95,8 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 	def addPacketToTable(self,packet):
 		if packet!=None:
-			print "entered add packet to table"
-			print "the packet is "+str(packet)
+			# print "entered add packet to table"
+			# print "the packet is "+str(packet)
 			self.table.insertRow(self.tableSize)
 			self.table.setVerticalHeaderItem(self.tableSize, QtGui.QTableWidgetItem(str(packet["No."])))
 			#self.table.setItem(self.tableSize,0, QtGui.QTableWidgetItem(str(packet['No.'])))
