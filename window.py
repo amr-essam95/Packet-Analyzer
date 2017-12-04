@@ -120,11 +120,16 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			if (filterOutput==True):
 				addPacketToTable(packet)
 #########################################################
-    def showPacketDescription(self,packet):
-        #self.treeWidget.clear()
-        for key,value in packet['Description'].iteritems():
-            #fill the tree
-            pass
+	def showPacketDescription(self,packet):
+		#self.treeWidget.clear()
+		packet=self.thread.getPacket()
+		for key,value in packet['Description'].iteritems():
+			itemKey = QTreeWidgetItem([key])
+			treeWidget.addTopLevelItem(item)
+			itemValue = QTreeWidgetItem([value])
+			itemKey.addChild(itemValue)
+			#fill the tree
+			pass
 #########################################################
 	def showPacketHexadecimal(self,packet):
 		self.plainTextEdit.setText(packet['Hexa'])
