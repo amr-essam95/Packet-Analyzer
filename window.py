@@ -100,8 +100,13 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.startCapture()
 #######################################################
 	def cellCLicked(self,row,column):
-		packet = [packet for packet in self.packetList if packet['No.'] == self.table.verticalHeaderItem(int(row)).text()][0]
-		#packet = packet[0]
+		print row
+		print column
+		print self.packetList
+		print self.table.verticalHeaderItem(int(row)).text()
+
+		packet = [packet for packet in self.packetList if str(packet['No.']) == self.table.verticalHeaderItem(int(row)).text()]
+		packet = packet[0]
 		self.showPacketDescription(packet)
 		self.showPacketHexadecimal(packet)
 		#find the packet
@@ -177,6 +182,8 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.treeWidget.clear()
 		#packet={"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66"}
 		for key,value in packet['Description'].iteritems():
+			print key
+			print value
 			itemKey = QtGui.QTreeWidgetItem([key])
 			self.treeWidget.addTopLevelItem(itemKey)
 			itemValue = QtGui.QTreeWidgetItem([value])
