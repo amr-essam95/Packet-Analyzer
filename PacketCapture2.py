@@ -1,108 +1,85 @@
-'''
-
-This will be Example for using scapy for sniffing a packets
-
-'''
-
 import scapy.all as scapy
-import json,sys
-import jsonpickle
-import io
+import sys,re
+from time import gmtime, strftime
+strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
+"""
+protocol need to be in string not number
+if ip is not in the packet it's ipv6 and it's not handled
+length is not handled yet
+hexa_output is not handled yet
 
-
-#CONFIG
+"""
 
 class Sniffer(object):
 	"""docstring for Sniffer"""
-	def __init__(self,cnt = 0,filter = None,iface = None,store = 0):
+	def __init__(self,cnt = 0,filter = None,iface = None,store = 0,window=None):
 		super(Sniffer, self).__init__()
 		self.cnt = cnt
 		self.filter = filter
 		self.iface = iface
+		self.counter = 0
+		self.window = window
 
 	def snif(self):
 		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
 
 	def pkt_callback(self,pkt):
-		self.pkt_parser(pkt)
+		data =  self.pkt_parser(pkt)
+		self.window.addPacket(data)
+
+	def content_parser(self,content):
+		content = content.split("\n")
+		content_dic = {}
+		current_key = ""
+		for line in content:
+			# r = re.search("\\n",content)
+			r = re.search("###\[(.*)\]###",line)
+			if r:
+				current_key = r.group(1)
+				content_dic[current_key] =  ""
+			else:
+				content_dic[current_key] += line
+		return content_dic
 
 	def pkt_parser(self,pkt):
+		self.counter += 1
 		content = pkt.show(dump=True)
 		summary = pkt.summary()
+		# hex_output = self.hexdump(pkt,True)
+		hex_output = "empty hex" 
+		# print content
 
-		# qsave = sys.stdout
-		q = io.StringIO() 
+		# r = re.search("(\d*\.\d*\.\d*\.\d*).*>\s(\d*\.\d*\.\d*\.\d*)",summary)
 
-		#CAPTURES OUTPUT
-		sys.stdout = q  
+		data = {"No.":self.counter}
+		data["No."] = self.counter
+		data["Time"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+		if "IP" in pkt:
+			data["Source"] = pkt["IP"].src
+			data["Destination"] = pkt["IP"].dst
+			data["protocol"] =  pkt["IP"].proto
+		else:
+			data["Source"] = " "
+			data["Destination"] = " "
+			data["protocol"] = " "
+		data["Length"] = 0
+		data["Info"] = self.content_parser(content)
+		data["Hexa"]  = hex_output
+		return data
 
-		#Text you're capturing
-		scapy.hexdump(pkt)
-
-		#restore original stdout
-		# sys.stdout = qsave
-
-		#release output
-		# sout = q.getvalue()
-
-		#Add to string (format if need be)
-		# outputPacket += sout + '\n'
-
-		#Close IOStream
-		# q.close() 
-		print "ooooooooooooooo"
-		# print outputPacket
-		print "hhhhhhhhhhhhhhhhh"
-		# print summary
-		# print x
-		print "\n\n"
-	def expand(self,x):
-		yield x
-		while x.payload:
-			x = x.payload
-			yield x
 
 #set number of packets to be sniffed , if set to 0  it will be sniff to infinity 
 cnt = 0
-
 #set the Filter to any type of protocol , port etc. you want (ex.ICMP) ,None mean all
 Filter = None
-
 #set the device to sniff from (ex. eth0) , None mean all
 iFace = None
-
 #file name.pcap to print in it 
 file_name="Mypackets"
 
-#END CONFIG
-
-# def pkt_callback(pkt):
-# 	print "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
-# 	pkt.show()
-
-
-#For live sniffing of packets and printing summary about each packet sniffed
-# pkts = scapy.sniff(iface=iFace,filter=Filter,count=cnt,prn=pkt_callback,store = 0)
-# pkts = scapy.sniff(iface=iFace,filter=Filter,count=cnt,prn=lambda x:x.sprintf("{IP:%IP.src% -> %IP.dst%\n}{Raw:%Raw.load%\n}"))
-
 s = Sniffer(cnt,Filter,iFace)
 s.snif()
-
-#for details of packets to be shown 
-# for i in range(len(pkts)):
-# 	print("\n\n")	
-# 	print(pkts[i].show())			
-	
-
-# print("\n\n")
-#for expressing content of each packet in hex
-# for i in range(len(pkts)):
-# 	print("\n")
-# 	print(scapy.hexdump(pkts[i]))
-
-
-# print("\n")
 
 
 #for saving the packets sniffed to be viewed in wireshark or any same program
