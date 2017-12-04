@@ -7,7 +7,6 @@ This will be Example for using scapy for sniffing a packets
 import scapy.all as scapy
 import json,sys
 import jsonpickle
-import io
 
 
 
@@ -25,41 +24,50 @@ class Sniffer(object):
 		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
 
 	def pkt_callback(self,pkt):
+		# pkt.show()
 		self.pkt_parser(pkt)
 
 	def pkt_parser(self,pkt):
-		content = pkt.show(dump=True)
-		summary = pkt.summary()
+		# x = pkt.show()
+		# for x in pkt[0]:
+		# 	print "okkkkkkkkkkk"
+		# 	print x.ether
+		# x = jsonpickle.encode(object)
 
-		# qsave = sys.stdout
-		q = io.StringIO() 
-
-		#CAPTURES OUTPUT
-		sys.stdout = q  
-
-		#Text you're capturing
-		scapy.hexdump(pkt)
-
-		#restore original stdout
-		# sys.stdout = qsave
-
-		#release output
-		# sout = q.getvalue()
-
-		#Add to string (format if need be)
-		# outputPacket += sout + '\n'
-
-		#Close IOStream
-		# q.close() 
-		print "ooooooooooooooo"
-		# print outputPacket
-		print "hhhhhhhhhhhhhhhhh"
-		# print summary
+		# print len(pkt)
+		# print dir(pkt[0])
+		# x = str(pkt.show())
+		# print pkt.show.dst
+		# for x in pkt:
+		# 	print x
+		# 	print "hhhhhhhhhhhhhhhhhhs--------------------------"
+		layers = []
+		counter = 0
+		while True:
+		    layer = pkt.getlayer(counter)
+		    if (layer != None):
+		        print layer.name
+		        layers.append(layer.name)
+		    else:
+		        break
+		    counter += 1
+		print layers
+		for x in layers:
+			if x == "Ethernet":
+				x = "Ether"
+			print str(pkt[x]).encode("HEX")
+			print "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+		# x = pkt.show(dump=True)
 		# print x
+		# res = list(self.expand(pkt))
+		# print res
+		# for x in res:
+		# 	print x
 		print "\n\n"
+		# sys.exit()
 	def expand(self,x):
-		yield x
-		while x.payload:
+	    yield x
+	    while x.payload:
 			x = x.payload
 			yield x
 
