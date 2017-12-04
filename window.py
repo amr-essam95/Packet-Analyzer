@@ -24,6 +24,7 @@ class ThreadingClass(QtCore.QThread):
 		#thread.start() # Start the execution
 		#print("thread started")
 		self._stop_event = threading.Event()
+
 	def run(self):
 		""" Method that runs forever """
 		while True:
@@ -57,6 +58,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		header.setStretchLastSection(True)
 		self.thread = ThreadingClass()
+		#self.showPacketDescription(1)
 ######################################################
 	def startCaptureBtnClicked(self,btn):
 		if(self.stackedWidget.currentIndex()==0):
@@ -121,12 +123,12 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 				addPacketToTable(packet)
 #########################################################
 	def showPacketDescription(self,packet):
-		#self.treeWidget.clear()
-		packet=self.thread.getPacket()
+		self.treeWidget.clear()
+		#packet={"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66"}
 		for key,value in packet['Description'].iteritems():
-			itemKey = QTreeWidgetItem([key])
-			treeWidget.addTopLevelItem(item)
-			itemValue = QTreeWidgetItem([value])
+			itemKey = QtGui.QTreeWidgetItem([key])
+			self.treeWidget.addTopLevelItem(itemKey)
+			itemValue = QtGui.QTreeWidgetItem([value])
 			itemKey.addChild(itemValue)
 			#fill the tree
 			pass
