@@ -66,8 +66,10 @@ class Sniffer(object):
 			data["Destination"] = "-"
 			data["Protocol"] = "-"
 		data["Length"] = 0
-		data["Info"] = self.content_parser(content)
+		parsed_content = self.content_parser(content)
+		data["Info"] = parsed_content
 		data["Hexa"]  = hex_output
+		data["Description"] = parsed_content
 		return data
 
 
