@@ -224,8 +224,10 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			sys.exit()
 #########################################################
 app = QtGui.QApplication(sys.argv)
+app.setStyle('plastique')
 window = MyWindow()
 window.show()
+
 app.exec_()
 ##########################################################
 
