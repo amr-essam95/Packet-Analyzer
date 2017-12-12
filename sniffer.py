@@ -4,6 +4,9 @@ from time import gmtime, strftime
 sys.path.insert(0,'./scapy-master/')
 import scapy.all as scapy
 import scapy.utils as utils
+from scapy.config import conf
+from scapy.arch import linux
+
 """
 protocol need to be in string not number
 if ip is not in the packet it's ipv6 and it's not handled
@@ -22,6 +25,7 @@ class Sniffer(object):
 		self.counter = 0
 		self.window = window
 		self.file = open('x','w')
+		print linux.get_interfaces()
 
 	def snif(self):
 		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
@@ -51,9 +55,7 @@ class Sniffer(object):
 		content = pkt.show(dump=True)
 		summary = pkt.summary()
 		hex_output = utils.hexdump2(pkt)
-		# print content
 
-		# r = re.search("(\d*\.\d*\.\d*\.\d*).*>\s(\d*\.\d*\.\d*\.\d*)",summary)
 
 		data = {"No.":self.counter}
 		data["No."] = self.counter

@@ -25,6 +25,7 @@ import scapy.arch
 from scapy.error import warning, Scapy_Exception, log_interactive, log_loading
 from scapy.arch.common import get_if, get_bpf_pointer
 from scapy.modules.six.moves import range
+import re
 
 
 
@@ -117,6 +118,30 @@ def get_if_list():
         l = plain_str(l)
         lst.append(l.split(":")[0].strip())
     return lst
+def get_interfaces():
+    try:
+        f=open("/proc/net/dev", "rb")
+    except IOError:
+        warning("Can't open /proc/net/dev !")
+        return []
+    lst = []
+    d = {}
+    f.readline()
+    f.readline()
+    for l in f:
+        l = plain_str(l)
+        temp = l.split(":")[0].strip()
+        if temp == "lo":
+            continue
+        r = re.search("enp(.)s(.)",temp)
+        if r:
+            d["Ethernet(peripheral %s serial %s)" % (r.group(1),r.group(2))] = temp
+        r = re.search("wlo(.)",temp)
+        if r:
+            d["Wifi %s" % r.group(1)] = temp
+        lst.append(temp)
+    return lst,d
+
 def get_working_if():
     for i in get_if_list():
         if i == LOOPBACK_NAME:                
@@ -519,6 +544,8 @@ class L2Socket(SuperSocket):
             set_promisc(self.ins, self.iface, 0)
         SuperSocket.close(self)
     def recv(self, x=MTU):
+        # print ("a5eran")
+        # print (self.iface)
         pkt, sa_ll = self.ins.recvfrom(x)
         if sa_ll[2] == socket.PACKET_OUTGOING:
             return None
