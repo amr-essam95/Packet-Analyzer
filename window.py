@@ -35,8 +35,8 @@ class ThreadingClass(QtCore.QThread):
 		# window.addPacket(packet)
 		sniffer = capture.Sniffer(window = window)
 		sniffer.snif()
-	def getPacket(self):
-		return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66\nsjvisdj vsdnkvs vjdsnvj dsjvjsdv jsdsd vds vjsd vjk djvsd jv sdjv msd vds dv k vks\n vdsv \n"}
+	# def getPacket(self):
+	# 	return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66\nsjvisdj vsdnkvs vjdsnvj dsjvjsdv jsdsd vds vjsd vjk djvsd jv sdjv msd vds dv k vks\n vdsv \n"}
 	def stop(self):
 		window.thread.terminate()
 		#print("thread stopped")  #to test stop function
@@ -53,6 +53,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.startCaptureBtn.triggered.connect(lambda:self.startCaptureBtnClicked(self.startCaptureBtn))
 		self.stopCaptureBtn.triggered.connect(lambda:self.stopCaptureBtnClicked(self.stopCaptureBtn))
 		self.actionExitBtn.triggered.connect(lambda:self.exitBtnClicked(self.actionExitBtn))
+		self.applyFIlterBtn.clicked.connect(lambda:self.applyFilterClicked(self.applyFIlterBtn))
 		self.saveBtn.triggered.connect(lambda:self.saveBtnClicked(self.saveBtn))
 		self.pauseCaptureBtn.triggered.connect(lambda:self.pauseCaptureBtnClicked(self.pauseCaptureBtn))
 		self.packetList=[]
@@ -147,7 +148,9 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.addPacketToTable(packet)
 #########################################################
 	def addPacketToTable(self,packet):
+
 		if packet!=None:
+			#print "entered add packet to table"
 			# print "entered add packet to table"
 			# print "the packet is "+str(packet)
 			self.table.insertRow(self.tableSize)
@@ -165,18 +168,29 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 	def passFilter(self,packet):
 		if (self.filter==""):#if there is no filter
 			return True
-		elif(str(packet['Protocol']).lower()==str(self.filter).lower()):
-			return True
-		else :
-			return False
+		else:
+			columns=['Time','Source','Destination','Protocol','Length','Info']
+			for column in columns:
+				if (str(packet[column]).lower() == str(self.filter).lower()):
+					return True
+		
+		return False
 #########################################################
 	def applyNewFilter(self):
+		#print "entered apply new filter"
 		self.tableSize=0
 		self.table.setRowCount(0)
+		#print "the packetlist I am looping on is "
+		#print "###################################"
+		#print str(self.packetList)
 		for packet in self.packetList:
+			
 			filterOutput=self.passFilter(packet)
+			#print "****************************"
+			#print "the packet is "+ str(packet)
+			#print "the filter output is " + str(filterOutput)
 			if (filterOutput==True):
-				addPacketToTable(packet)
+				self.addPacketToTable(packet)
 #########################################################
 	def showPacketDescription(self,packet):
 		self.treeWidget.clear()
@@ -195,10 +209,14 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.plainTextEdit.appendPlainText(packet['Hexa'])
 #########################################################
 	def applyFilterClicked(self,btn):
-		newFilter=self.filterLineEdit.text
+		#print "ok I am clicked"
+		newFilter=self.filterLineEdit.text()
+		#print "the text of the filter was " + str(self.filter)
 		if (newFilter != self.filter):
+
 			self.filter=newFilter
-			self.applyNewFilter
+			#print "the text of the filter became " + str(self.filter)
+			self.applyNewFilter()
 #########################################################
 	def saveSession(self):
 		pass
