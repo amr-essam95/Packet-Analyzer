@@ -1,6 +1,11 @@
-import scapy.all as scapy
+# import scapy.all as scapy
 import sys,re,json
 from time import gmtime, strftime
+sys.path.insert(0,'./scapy-master/')
+import scapy.all as scapy
+import scapy.utils as utils
+from scapy.config import conf
+from scapy.arch import linux
 
 """
 protocol need to be in string not number
@@ -20,10 +25,11 @@ class Sniffer(object):
 		self.counter = 0
 		self.window = window
 		self.file = open('x','w')
+		print linux.get_interfaces()
 
 	def snif(self):
 		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
-
+		# pkts = sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
 	def pkt_callback(self,pkt):
 		data =  self.pkt_parser(pkt)
 		self.file.write(json.dumps(data))
@@ -48,11 +54,8 @@ class Sniffer(object):
 		self.counter += 1
 		content = pkt.show(dump=True)
 		summary = pkt.summary()
-		# hex_output = self.hexdump(pkt,True)
-		hex_output = "empty hex" 
-		# print content
+		hex_output = utils.hexdump2(pkt)
 
-		# r = re.search("(\d*\.\d*\.\d*\.\d*).*>\s(\d*\.\d*\.\d*\.\d*)",summary)
 
 		data = {"No.":self.counter}
 		data["No."] = self.counter
