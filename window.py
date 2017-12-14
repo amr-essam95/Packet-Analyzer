@@ -5,6 +5,7 @@ import sys
 import threading
 import time
 import sniffer as capture
+from scapy.arch import linux
 ####################################################################
 class ThreadingClass(QtCore.QThread):
 	""" Threading example class
@@ -79,10 +80,10 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		if(self.stackedWidget.currentIndex()==0):
 			#assure that connection is selected and send it to thread
 		
-			if self.listWidget==None :
-				self.selectedDevice = None
-			else:
-				self.selectedDevice= self.listWidget.currentItem().text()
+			# if self.listWidget==None :
+			# 	self.selectedDevice = None
+			# else:
+			# 	self.selectedDevice= self.listWidget.currentItem().text()
 			self.startCapture()
 			self.stackedWidget.setCurrentIndex(1)
 			self.startCaptureBtn.setEnabled(False)
@@ -112,7 +113,9 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.startCapture()
 #######################################################
 	def addDevicesToList(self):
-		devicesList=['Wi-fi..','Ethernet']
+		# devicesList = ['Wi-fi..','Ethernet']
+		devicesList = []
+		devicesList,dic = linux.get_interfaces()
 		for item in devicesList:
 			self.listWidget.addItem(QtGui.QListWidgetItem(item))
 ########################################################

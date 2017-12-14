@@ -41,10 +41,6 @@ class Sniffer(object):
 		content_dic = {}
 		current_key = ""
 		for line in content:
-			# r = re.search("\\n",content)
-			# print "xxxxxxxxxxxxxxxx"
-			# print line.strip()
-			# print "xxxxxxxxxxxxxxxx"
 			r = re.search("###\[(.*)\]###",line)
 			if r:
 				current_key = r.group(1).strip()
