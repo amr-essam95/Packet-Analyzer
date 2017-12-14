@@ -79,10 +79,12 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		if(self.stackedWidget.currentIndex()==0):
 			#assure that connection is selected and send it to thread
 		
-			if self.listWidget==None :
+			if self.listWidget.currentItem()==None :
 				self.selectedDevice = None
+				#print self.selectedDevice
 			else:
 				self.selectedDevice= self.listWidget.currentItem().text()
+				#print self.selectedDevice
 			self.startCapture()
 			self.stackedWidget.setCurrentIndex(1)
 			self.startCaptureBtn.setEnabled(False)
