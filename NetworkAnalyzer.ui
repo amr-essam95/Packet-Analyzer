@@ -160,16 +160,6 @@
           <property name="viewMode">
            <enum>QListView::ListMode</enum>
           </property>
-          <item>
-           <property name="text">
-            <string>Ethernet</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Wi-fi</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item>

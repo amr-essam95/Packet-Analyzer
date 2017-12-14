@@ -50,6 +50,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		Ui_MainWindow.__init__(self)
 		self.setupUi(self)
 		self.setWindowState(QtCore.Qt.WindowMaximized)
+		self.addDevicesToList()
 		self.startCaptureBtn.triggered.connect(lambda:self.startCaptureBtnClicked(self.startCaptureBtn))
 		self.stopCaptureBtn.triggered.connect(lambda:self.stopCaptureBtnClicked(self.stopCaptureBtn))
 		self.actionExitBtn.triggered.connect(lambda:self.exitBtnClicked(self.actionExitBtn))
@@ -67,7 +68,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		self.treeWidget.header().setStretchLastSection(False)
 		self.thread = ThreadingClass()
-		
+		self.selectedDevice=None
 		# treeheader = self.treeWidget.horizontalHeader()
 		# treeheader.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		#adjusting the filter
@@ -77,6 +78,11 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 	def startCaptureBtnClicked(self,btn):
 		if(self.stackedWidget.currentIndex()==0):
 			#assure that connection is selected and send it to thread
+		
+			if self.listWidget==None :
+				self.selectedDevice = None
+			else:
+				self.selectedDevice= self.listWidget.currentItem().text()
 			self.startCapture()
 			self.stackedWidget.setCurrentIndex(1)
 			self.startCaptureBtn.setEnabled(False)
@@ -105,6 +111,11 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.stopCaptureBtn.setEnabled(True)
 			self.startCapture()
 #######################################################
+	def addDevicesToList(self):
+		devicesList=['Wi-fi..','Ethernet']
+		for item in devicesList:
+			self.listWidget.addItem(QtGui.QListWidgetItem(item))
+########################################################
 	def cellCLicked(self,row,column):
 		# print row
 		# print column
@@ -130,7 +141,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.stopCapture()
 		self.pauseCaptureBtn.setEnabled(False)
 		self.startCaptureBtn.setEnabled(True)
-		self.stopCaptureBtn.setEnabled(True)  
+		self.stopCaptureBtn.setEnabled(True) 
 #########################################################
 	def startNewCapture(self,btn):
 		if (btn=="Ok"):
