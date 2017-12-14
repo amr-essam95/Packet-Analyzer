@@ -1175,6 +1175,8 @@ A side effect is that, to obtain "{" and "}" characters, you must use
     def _do_summary(self):
         found, s, needed = self.payload._do_summary()
         ret = ""
+        print ("+++++++++++++++++++++")
+        print (s)
         if not found or self.__class__ in needed:
             ret = self.mysummary()
             if isinstance(ret, tuple):
@@ -1198,6 +1200,7 @@ A side effect is that, to obtain "{" and "}" characters, you must use
 
     def summary(self, intern=0):
         """Prints a one line summary of a packet."""
+        print ("xx")
         found,s,needed = self._do_summary()
         return s
 

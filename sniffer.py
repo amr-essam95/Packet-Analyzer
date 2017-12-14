@@ -42,35 +42,46 @@ class Sniffer(object):
 		current_key = ""
 		for line in content:
 			# r = re.search("\\n",content)
+			# print "xxxxxxxxxxxxxxxx"
+			# print line.strip()
+			# print "xxxxxxxxxxxxxxxx"
 			r = re.search("###\[(.*)\]###",line)
 			if r:
-				current_key = r.group(1)
+				current_key = r.group(1).strip()
 				content_dic[current_key] =  ""
 			else:
-				content_dic[current_key] += line
+				content_dic[current_key] += line.strip() + "\n"
 		return content_dic
 
 	def pkt_parser(self,pkt):
 		self.counter += 1
 		content = pkt.show(dump=True)
 		summary = pkt.summary()
+		r = re.search("(.*)\d",summary)
+		if r:
+			summary = r.group(1)
+			protocol = summary.split("/")[-1].strip().split(" ")
+		else:
+			protocol = " "
 		hex_output = utils.hexdump2(pkt)
-
-
 		data = {"No.":self.counter}
 		data["No."] = self.counter
 		data["Time"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+		data["Protocol"] = protocol[0]
 		if "IP" in pkt:
 			data["Source"] = pkt["IP"].src
 			data["Destination"] = pkt["IP"].dst
-			data["Protocol"] =  str(pkt["IP"].proto)
+			# data["Protocol"] =  str(pkt["IP"].proto)
 		else:
 			data["Source"] = "-"
 			data["Destination"] = "-"
-			data["Protocol"] = "-"
+			# data["Protocol"] = "-"
 		data["Length"] = 0
 		parsed_content = self.content_parser(content)
-		data["Info"] = parsed_content
+		if "Raw" in parsed_content:
+			data["Info"] = parsed_content["Raw"].split("=")[1].strip().strip("'")
+		else:
+			data["Info"] = " "
 		data["Hexa"]  = hex_output
 		data["Description"] = parsed_content
 		return data
