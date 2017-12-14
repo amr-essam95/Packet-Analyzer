@@ -25,7 +25,7 @@ class Sniffer(object):
 		self.counter = 0
 		self.window = window
 		# self.file = open('x','w')
-		print linux.get_interfaces()
+		# print linux.get_interfaces()
 
 	def snif(self):
 		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		

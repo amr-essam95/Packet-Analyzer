@@ -29,15 +29,13 @@ class ThreadingClass(QtCore.QThread):
 
 	def run(self):
 		""" Method that runs forever """
-		# while True:
-			#print("thread running")  #to test run function
-		# time.sleep(self.interval)
-		# packet= self.getPacket()
-		# window.addPacket(packet)
-		sniffer = capture.Sniffer(window = window)
+		if window.selectedDevice == None:
+			device = None
+		else:
+			device = dic_devices[str(window.selectedDevice)]
+		sniffer = capture.Sniffer(iface = device, window = window)
 		sniffer.snif()
-	# def getPacket(self):
-	# 	return {"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66\nsjvisdj vsdnkvs vjdsnvj dsjvjsdv jsdsd vds vjsd vjk djvsd jv sdjv msd vds dv k vks\n vdsv \n"}
+
 	def stop(self):
 		window.thread.terminate()
 		#print("thread stopped")  #to test stop function
@@ -263,6 +261,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			sys.exit()
 #########################################################
 app = QtGui.QApplication(sys.argv)
+ldev,dic_devices = linux.get_interfaces()
 app.setStyle('plastique')
 window = MyWindow()
 window.show()
