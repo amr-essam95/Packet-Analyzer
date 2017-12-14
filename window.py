@@ -64,7 +64,12 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		header = self.table.horizontalHeader()
 		header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		header.setStretchLastSection(True)
+		self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+		self.treeWidget.header().setStretchLastSection(False)
 		self.thread = ThreadingClass()
+		
+		# treeheader = self.treeWidget.horizontalHeader()
+		# treeheader.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		#adjusting the filter
 		#when selected add both descriptions
 		#self.showPacketDescription(1)
@@ -118,7 +123,8 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.stopCapture()
 		self.stopped=True
 		self.startCaptureBtn.setEnabled(True)
-		self.stopCaptureBtn.setEnabled(False)   
+		self.stopCaptureBtn.setEnabled(False) 
+		self.pauseCaptureBtn.setEnabled(False)  
 #########################################################
 	def pauseCaptureBtnClicked(self,btn):      
 		self.stopCapture()
