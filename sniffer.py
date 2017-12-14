@@ -24,7 +24,7 @@ class Sniffer(object):
 		self.iface = iface
 		self.counter = 0
 		self.window = window
-		self.file = open('x','w')
+		# self.file = open('x','w')
 		print linux.get_interfaces()
 
 	def snif(self):
@@ -32,7 +32,7 @@ class Sniffer(object):
 		# pkts = sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
 	def pkt_callback(self,pkt):
 		data =  self.pkt_parser(pkt)
-		self.file.write(json.dumps(data))
+		# self.file.write(json.dumps(data))
 
 		self.window.addPacket(data)
 
