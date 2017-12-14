@@ -34,7 +34,8 @@ class ThreadingClass(QtCore.QThread):
 		else:
 			device = dic_devices[str(window.selectedDevice)]
 		sniffer = capture.Sniffer(iface = device, window = window)
-		sniffer.snif()
+		pkts = sniffer.snif()
+		sniffer.save(pkts,"pack")
 
 	def stop(self):
 		window.thread.terminate()
@@ -68,6 +69,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.treeWidget.header().setStretchLastSection(False)
 		self.thread = ThreadingClass()
 		self.selectedDevice=None
+		self.stop=True
 		# treeheader = self.treeWidget.horizontalHeader()
 		# treeheader.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		#adjusting the filter
@@ -262,6 +264,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 app = QtGui.QApplication(sys.argv)
 ldev,dic_devices = linux.get_interfaces()
+list_of_packets = []
 app.setStyle('plastique')
 window = MyWindow()
 window.show()
