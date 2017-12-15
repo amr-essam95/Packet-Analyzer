@@ -299,6 +299,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="loadBtn"/>
     <addaction name="saveBtn"/>
     <addaction name="actionExitBtn"/>
    </widget>
@@ -365,6 +366,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="saveBtn"/>
+   <addaction name="loadBtn"/>
   </widget>
   <action name="actionExit">
    <property name="text">
@@ -422,6 +424,18 @@
    </property>
    <property name="text">
     <string>Pause capture</string>
+   </property>
+  </action>
+  <action name="loadBtn">
+   <property name="icon">
+    <iconset>
+     <normaloff>open.png</normaloff>open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Load Session</string>
    </property>
   </action>
  </widget>

@@ -56,6 +56,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.actionExitBtn.triggered.connect(lambda:self.exitBtnClicked(self.actionExitBtn))
 		self.applyFIlterBtn.clicked.connect(lambda:self.applyFilterClicked(self.applyFIlterBtn))
 		self.saveBtn.triggered.connect(lambda:self.saveBtnClicked(self.saveBtn))
+		self.loadBtn.triggered.connect(lambda:self.fileOpen(self.loadBtn))
 		self.pauseCaptureBtn.triggered.connect(lambda:self.pauseCaptureBtnClicked(self.pauseCaptureBtn))
 		self.packetList=[]
 		self.filter=""
@@ -119,7 +120,9 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		devicesList,dic = linux.get_interfaces()
 		for item in devicesList:
 			self.listWidget.addItem(QtGui.QListWidgetItem(item))
+	
 ########################################################
+
 	def cellCLicked(self,row,column):
 		# print row
 		# print column
@@ -239,11 +242,10 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			#print "the text of the filter became " + str(self.filter)
 			self.applyNewFilter()
 #########################################################
-	def saveSession(self):
-		pass
+	# def saveSession(self):
+	# 	pass
 #########################################################
-	def saveBtnClicked(self,btn):
-		pass
+	
 #########################################################
 	def exitBtnClicked(self,btn):
 		msg = QtGui.QMessageBox()
