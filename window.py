@@ -243,13 +243,13 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.applyNewFilter()
 #########################################################
 	def saveBtnClicked(self,btn):
-		name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
-        file = open(name,'w')
+		fileName= QtGui.QFileDialog.getSaveFileName(self, 'Save File')
+		file = open(fileName,'w')
 #########################################################
 	def fileOpen(self,btn):
-		name= QtGui.QFileDialog.getOpenFileName(self,'open File')
-		file = open(name,'r')
-		print 'done'
+		fileName= QtGui.QFileDialog.getOpenFileName(self,'open File')
+		file = open(fileName,'r')
+		
 #########################################################
 	# def saveSession(self):
 	# 	pass
