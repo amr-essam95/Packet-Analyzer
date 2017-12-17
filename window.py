@@ -35,7 +35,13 @@ class ThreadingClass(QtCore.QThread):
 			device = dic_devices[str(window.selectedDevice)]
 		sniffer = capture.Sniffer(iface = device, window = window)
 		pkts = sniffer.snif()
-		sniffer.save(pkts,"pack")
+		if window.operation == "save":
+			sniffer.save(pkts,str(window.file_to_save))
+		else:
+			# window.clearTable()
+			print "table cleared"
+			sniffer.load(window.file_to_load)
+		# window.clearTable()
 
 	def stop(self):
 		window.thread.terminate()
@@ -70,7 +76,10 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.treeWidget.header().setStretchLastSection(False)
 		self.thread = ThreadingClass()
 		self.selectedDevice=None
-		self.stop=True
+		self.stop=False
+		self.file_to_save = "x"
+		self.file_to_load = "x"
+		self.operation = "save"
 		# treeheader = self.treeWidget.horizontalHeader()
 		# treeheader.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		#adjusting the filter
@@ -244,11 +253,24 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 	def saveBtnClicked(self,btn):
 		fileName= QtGui.QFileDialog.getSaveFileName(self, 'Save File')
-		file = open(fileName,'w')
+		self.file_to_save = fileNames
+		self.operation = "save"
+		self.stop = True
+		# self.clearTable()
+		# file = open(fileName,'w')
 #########################################################
 	def fileOpen(self,btn):
 		fileName= QtGui.QFileDialog.getOpenFileName(self,'open File')
-		file = open(fileName,'r')
+		print "name"
+		self.operation = "load"
+		self.stop = True
+		self.file_to_load = str(fileName)
+
+	def clearTable(self):
+		print "clearing"
+		while (self.table.rowCount() > 0):
+			self.table.removeRow(0)
+		print "cleared"
 		
 #########################################################
 	# def saveSession(self):
@@ -273,6 +295,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		if buttonPressed =="ok":
 			sys.exit()
 #########################################################
+file_name = "xy"
 app = QtGui.QApplication(sys.argv)
 ldev,dic_devices = linux.get_interfaces()
 list_of_packets = []

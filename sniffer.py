@@ -29,29 +29,31 @@ class Sniffer(object):
 		# print linux.get_interfaces()
 
 	def snif(self):
-		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0,stop_filter=self.stopfilter)		
+		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 1,stop_filter=self.stopfilter)		
 		return pkts
 		# pkts = sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
 	def pkt_callback(self,pkt):
-		print "ok"
 		data =  self.pkt_parser(pkt)
-		# self.file.write(json.dumps(data))
 		self.window.addPacket(data)
 	def stopfilter(self,pkt):
-		self.c -= 2
-		# if self.window.stop:
+		if self.window.stop:
+			return True
+		return False
+		# self.c -= 2
 		if self.c <= 0:
 			return True
 		else:
 			return False
 	def save(self,pkts,path = "pkts"):
 		scapy.wrpcap(path+".pcap",pkts)
-		self.load(path)
+		# self.load(path+".pcap")
 
 	def load(self,path = "pkts"):
-		packets = scapy.rdpcap(path+".pcap",count=10)
-		# p = scapy.sniff(offline='./pack.pcap', prn=self.pkt_callback)
-		print packets
+		# packets = scapy.rdpcap(path+".pcap",count=10)
+		# self.window.clearTable()
+		p = scapy.sniff(offline=path + ".pcap", prn=self.pkt_callback)
+		print p
+		# print p
 		# print self.pkt_parser(packets)
 		# return packets
 
