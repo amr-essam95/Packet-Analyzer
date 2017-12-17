@@ -163,7 +163,8 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.saveBtn.setEnabled(True)
 #########################################################
 	def stopCapture(self):
-		self.thread.stop()
+		self.stop = True
+		#self.thread.stop()
 #########################################################
 	def addPacket(self,packet):
 		self.packetList.append(packet)
