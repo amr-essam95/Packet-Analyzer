@@ -6,6 +6,7 @@ import scapy.all as scapy
 import scapy.utils as utils
 from scapy.config import conf
 from scapy.arch import linux
+import datetime
 
 """
 protocol need to be in string not number
@@ -76,7 +77,8 @@ class Sniffer(object):
 		hex_output = utils.hexdump2(pkt)
 		data = {"No.":self.counter}
 		data["No."] = self.counter
-		data["Time"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+# 		data["Time"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        data["Time"] = datetime.datetime.fromtimestamp(int(pkt.time)).strftime('%Y-%m-%d %H:%M:%S')
 		data["Protocol"] = protocol[0]
 		if "IP" in pkt:
 			data["Source"] = pkt["IP"].src
