@@ -6,7 +6,9 @@ import scapy.all as scapy
 import scapy.utils as utils
 from scapy.config import conf
 from scapy.arch import linux
+import scapy.data as dat
 import datetime
+import socket
 
 """
 protocol need to be in string not number
@@ -26,6 +28,9 @@ class Sniffer(object):
 		self.counter = 0
 		self.window = window
 		self.c = 10
+		self.MYTCP_SERVICES = {}
+		for p in dat.TCP_SERVICES.keys():
+  			self.MYTCP_SERVICES[dat.TCP_SERVICES[p]] = p 
 		# print linux.get_interfaces()
 
 	def snif(self):
@@ -68,7 +73,8 @@ class Sniffer(object):
 		self.counter += 1
 		content = pkt.show(dump=True)
 		summary = pkt.summary()
-		r = re.search("(.*)\d",summary)
+		r = re.search("(.*)(\d|Qry)",summary)
+		# print summary
 		if r:
 			summary = r.group(1)
 			protocol = summary.split("/")[-1].strip().split(" ")
@@ -77,24 +83,27 @@ class Sniffer(object):
 		hex_output = utils.hexdump2(pkt)
 		data = {"No.":self.counter}
 		data["No."] = self.counter
-# 		data["Time"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 		data["Time"] = datetime.datetime.fromtimestamp(int(pkt.time)).strftime('%Y-%m-%d %H:%M:%S')
 		data["Protocol"] = protocol[0]
 		if "IP" in pkt:
 			data["Source"] = pkt["IP"].src
 			data["Destination"] = pkt["IP"].dst
 			data["Length"] = pkt["IP"].len
+			# print socket.getservbyport(int(pkt["IP"].proto)),"--",protocol[0]
+			# print str(pkt["IP"].proto)
+			# print self.MYTCP_SERVICES[int(pkt["IP"].sport)]
 			# data["Protocol"] =  str(pkt["IP"].proto)
 		else:
 			data["Source"] = "-"
 			data["Destination"] = "-"
-			# data["Protocol"] = "-"
 			data["Length"] = 28
+			# data["Protocol"] =  protocol[0]
 		parsed_content = self.content_parser(content)
 		if "Raw" in parsed_content:
 			data["Info"] = parsed_content["Raw"].split("=")[1].strip().strip("'")
+			data["Info"] = summary
 		else:
-			data["Info"] = " "
+			data["Info"] = summary
 		data["Hexa"]  = hex_output
 		data["Description"] = parsed_content
 		return data
