@@ -33,15 +33,10 @@ class ThreadingClass(QtCore.QThread):
 			device = None
 		else:
 			device = dic_devices[str(window.selectedDevice)]
-		sniffer = capture.Sniffer(iface = device, window = window)
-		pkts = sniffer.snif()
-		if window.operation == "save":
-			sniffer.save(pkts,str(window.file_to_save))
-		else:
-			# window.clearTable()
-			print "table cleared"
-			sniffer.load(window.file_to_load)
-		# window.clearTable()
+		window.sniffer = capture.Sniffer(iface = device, window = window)
+		window.scapy_packets = window.sniffer.snif()
+		print window.scapy_packets
+		window.stop = False
 
 	def stop(self):
 		window.thread.terminate()
@@ -77,9 +72,11 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.thread = ThreadingClass()
 		self.selectedDevice=None
 		self.stop=False
-		self.file_to_save = "x"
-		self.file_to_load = "x"
-		self.operation = "save"
+		self.scapy_packets = None
+		self.sniffer = None
+		# self.file_to_save = "x"
+		# self.file_to_load = "x"
+		# self.operation = "save"
 		# treeheader = self.treeWidget.horizontalHeader()
 		# treeheader.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		#adjusting the filter
@@ -260,10 +257,10 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 	def saveBtnClicked(self,btn):
 		fileName= QtGui.QFileDialog.getSaveFileName(self, 'Save File')
-		self.file_to_save = fileName
-		if (str(self.file_to_save) != ""):
-			self.operation = "save"
-			self.stop = True
+		if (str(fileName) != ""):
+			self.sniffer.save(self.scapy_packets,str(fileName))
+			print "Saved object is %s and is saved in %s.pcap" % (self.scapy_packets,fileName)
+
 
 		# self.clearTable()
 		# file = open(fileName,'w')
@@ -271,25 +268,20 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 	def fileOpen(self,btn):
 		fileName= QtGui.QFileDialog.getOpenFileName(self,'open File')
 		if (str(fileName) != ""):
-			print "name"
-			self.operation = "load"
-			self.stop = True
 			self.pauseCaptureBtn.setEnabled(False)
 			self.startCaptureBtn.setEnabled(True)
 			self.stopCaptureBtn.setEnabled(False)
 			self.stopped=True
-			self.file_to_load = str(fileName)
 			if (self.stackedWidget.currentIndex()==0):
 				self.stackedWidget.setCurrentIndex(1)
+			self.clearTable()
+			print str(fileName)
+			self.sniffer.load(str(fileName))
 
 	def clearTable(self):
-		print "clearing"
 		self.packetList=[]
 		self.table.setRowCount(0)
 		self.tableSize=0
-		# while (self.table.rowCount() > 0):
-		# 	self.table.removeRow(0)
-		print "cleared"
 		
 #########################################################
 	# def saveSession(self):

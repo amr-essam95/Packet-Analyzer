@@ -25,13 +25,11 @@ class Sniffer(object):
 		self.counter = 0
 		self.window = window
 		self.c = 10
-		# self.file = open('x','w')
 		# print linux.get_interfaces()
 
 	def snif(self):
 		pkts = scapy.sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 1,stop_filter=self.stopfilter)		
 		return pkts
-		# pkts = sniff(iface=self.iface,filter=self.filter,count=self.cnt,prn=self.pkt_callback,store = 0)		
 	def pkt_callback(self,pkt):
 		data =  self.pkt_parser(pkt)
 		self.window.addPacket(data)
@@ -39,23 +37,18 @@ class Sniffer(object):
 		if self.window.stop:
 			return True
 		return False
-		# self.c -= 2
-		if self.c <= 0:
-			return True
-		else:
-			return False
+
 	def save(self,pkts,path = "pkts"):
 		scapy.wrpcap(path+".pcap",pkts)
 		# self.load(path+".pcap")
 
 	def load(self,path = "pkts"):
-		# packets = scapy.rdpcap(path+".pcap",count=10)
-		# self.window.clearTable()
-		p = scapy.sniff(offline=path + ".pcap", prn=self.pkt_callback)
+		self.counter = 0
+		try:
+			p = scapy.sniff(offline=path, prn=self.pkt_callback)
+		except:
+			print "Error in reading the pcap file"
 		print p
-		# print p
-		# print self.pkt_parser(packets)
-		# return packets
 
 	def content_parser(self,content):
 		content = content.split("\n")
