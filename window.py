@@ -74,9 +74,6 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		self.stop=False
 		self.scapy_packets = None
 		self.sniffer = None
-		# self.file_to_save = "x"
-		# self.file_to_load = "x"
-		# self.operation = "save"
 		# treeheader = self.treeWidget.horizontalHeader()
 		# treeheader.setResizeMode(QtGui.QHeaderView.ResizeToContents)
 		#adjusting the filter
@@ -123,7 +120,6 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.startCapture()
 #######################################################
 	def addDevicesToList(self):
-		# devicesList = ['Wi-fi..','Ethernet']
 		devicesList = []
 		devicesList,dic = linux.get_interfaces()
 		for item in devicesList:
@@ -231,10 +227,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 	def showPacketDescription(self,packet):
 		self.treeWidget.clear()
-		#packet={"No.":"1","Time":"15:10445454545454545454545454545","Source":"192.11.110.12","Destination":"192.10.11.11","Protocol":"http","Length":"1500","Info":"trial message blaaaaaaa","Description":{"bla":"blaa","ahmed":"lalaaa"},"Hexa":"00 55 66"}
 		for key,value in packet['Description'].iteritems():
-			# print key
-			# print value
 			itemKey = QtGui.QTreeWidgetItem([key])
 			self.treeWidget.addTopLevelItem(itemKey)
 			itemValue = QtGui.QTreeWidgetItem([value])
