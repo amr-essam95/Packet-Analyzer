@@ -68,8 +68,6 @@ class Sniffer(object):
 		self.counter += 1
 		content = pkt.show(dump=True)
 		summary = pkt.summary()
-		print summary
-		print "\n\n"
 		r = re.search("(.*)\d",summary)
 		if r:
 			summary = r.group(1)
