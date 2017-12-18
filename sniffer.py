@@ -68,6 +68,8 @@ class Sniffer(object):
 		self.counter += 1
 		content = pkt.show(dump=True)
 		summary = pkt.summary()
+		print summary
+		print "\n\n"
 		r = re.search("(.*)\d",summary)
 		if r:
 			summary = r.group(1)
@@ -78,7 +80,7 @@ class Sniffer(object):
 		data = {"No.":self.counter}
 		data["No."] = self.counter
 # 		data["Time"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-        data["Time"] = datetime.datetime.fromtimestamp(int(pkt.time)).strftime('%Y-%m-%d %H:%M:%S')
+		data["Time"] = datetime.datetime.fromtimestamp(int(pkt.time)).strftime('%Y-%m-%d %H:%M:%S')
 		data["Protocol"] = protocol[0]
 		if "IP" in pkt:
 			data["Source"] = pkt["IP"].src
@@ -89,7 +91,7 @@ class Sniffer(object):
 			data["Source"] = "-"
 			data["Destination"] = "-"
 			# data["Protocol"] = "-"
-		    data["Length"] = 0
+			data["Length"] = 28
 		parsed_content = self.content_parser(content)
 		if "Raw" in parsed_content:
 			data["Info"] = parsed_content["Raw"].split("=")[1].strip().strip("'")

@@ -133,14 +133,17 @@ def get_interfaces():
         temp = l.split(":")[0].strip()
         if temp == "lo":
             continue
-        r = re.search("enp(.)s(.)",temp)
-        if r:
-            d["Ethernet ( peripheral %s serial %s )" % (r.group(1),r.group(2))] = temp
-            lst.append("Ethernet ( peripheral %s serial %s )" % (r.group(1),r.group(2)))
-        r = re.search("wlo(.)",temp)
-        if r:
-            d["Wifi %s" % r.group(1)] = temp
-            lst.append("Wifi %s" % r.group(1))
+        lst.append(str(temp))
+        d[temp] = temp
+        # lst.append("Ethernet ( peripheral %s serial %s )" % (r.group(1),r.group(2)))
+        # r = re.search("enp(.)s(.)",temp)
+        # if r:
+        #     d["Ethernet ( peripheral %s serial %s )" % (r.group(1),r.group(2))] = temp
+        #     lst.append("Ethernet ( peripheral %s serial %s )" % (r.group(1),r.group(2)))
+        # r = re.search("wlo(.)",temp)
+        # if r:
+        #     d["Wifi %s" % r.group(1)] = temp
+        #     lst.append("Wifi %s" % r.group(1))
     return lst,d
 
 def get_working_if():
