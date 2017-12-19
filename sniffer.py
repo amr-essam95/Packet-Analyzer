@@ -5,7 +5,7 @@ sys.path.insert(0,'./scapy-master/')
 import scapy.all as scapy
 import scapy.utils as utils
 from scapy.config import conf
-from scapy.arch import linux
+# from scapy.arch import linux
 import scapy.data as dat
 import datetime
 import socket
@@ -30,7 +30,7 @@ class Sniffer(object):
 		self.c = 10
 		self.MYTCP_SERVICES = {}
 		for p in dat.TCP_SERVICES.keys():
-  			self.MYTCP_SERVICES[dat.TCP_SERVICES[p]] = p 
+			self.MYTCP_SERVICES[dat.TCP_SERVICES[p]] = p 
 		# print linux.get_interfaces()
 
 	def snif(self):
@@ -50,11 +50,10 @@ class Sniffer(object):
 
 	def load(self,path = "pkts"):
 		self.counter = 0
-		try:
-			p = scapy.sniff(offline=path, prn=self.pkt_callback)
-		except:
-			print "Error in reading the pcap file"
-		print p
+		# try:
+		p = scapy.sniff(offline=path, prn=self.pkt_callback)
+		# except:
+			# print "Error in reading the pcap file"
 
 	def content_parser(self,content):
 		content = content.split("\n")
@@ -78,6 +77,8 @@ class Sniffer(object):
 		if r:
 			summary = r.group(1)
 			protocol = summary.split("/")[-1].strip().split(" ")
+			if protocol == "IPv":
+				protocol = "IPv6"
 		else:
 			protocol = " "
 		hex_output = utils.hexdump2(pkt)
@@ -85,6 +86,10 @@ class Sniffer(object):
 		data["No."] = self.counter
 		data["Time"] = datetime.datetime.fromtimestamp(int(pkt.time)).strftime('%Y-%m-%d %H:%M:%S')
 		data["Protocol"] = protocol[0]
+		# if "Ether" in pkt:
+		# 	data["Length"] = pkt["Ether"].len
+		# else:
+		# 	data["Length"] = 0
 		if "IP" in pkt:
 			data["Source"] = pkt["IP"].src
 			data["Destination"] = pkt["IP"].dst
@@ -93,10 +98,14 @@ class Sniffer(object):
 			# print str(pkt["IP"].proto)
 			# print self.MYTCP_SERVICES[int(pkt["IP"].sport)]
 			# data["Protocol"] =  str(pkt["IP"].proto)
+		elif "IPv6" in pkt:
+			data["Source"] = pkt["IPv6"].src
+			data["Destination"] = pkt["IPv6"].dst
+			data["Length"] = pkt["IPv6"].plen
 		else:
 			data["Source"] = "-"
 			data["Destination"] = "-"
-			data["Length"] = 28
+			# data["Length"] = 28
 			# data["Protocol"] =  protocol[0]
 		parsed_content = self.content_parser(content)
 		if "Raw" in parsed_content:
