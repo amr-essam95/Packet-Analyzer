@@ -5,7 +5,10 @@ import sys
 import threading
 import time
 import sniffer as capture
-from scapy.arch import linux
+sys.path.insert(0,'./scapy-master/')
+import scapy.all as scapy
+from scapy.all import conf
+# from scapy.arch import linux
 ####################################################################
 class ThreadingClass(QtCore.QThread):
 	""" Threading example class
@@ -121,7 +124,10 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #######################################################
 	def addDevicesToList(self):
 		devicesList = []
-		devicesList,dic = linux.get_interfaces()
+		# devicesList,dic = linux.get_interfaces()
+		devicesList = []
+		print "devices"
+		print conf.iface
 		for item in devicesList:
 			self.listWidget.addItem(QtGui.QListWidgetItem(item))
 	
@@ -301,7 +307,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 #########################################################
 file_name = "xy"
 app = QtGui.QApplication(sys.argv)
-ldev,dic_devices = linux.get_interfaces()
+# ldev,dic_devices = linux.get_interfaces()
 list_of_packets = []
 app.setStyle('plastique')
 window = MyWindow()
