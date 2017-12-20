@@ -77,8 +77,9 @@ class Sniffer(object):
 		if r:
 			summary = r.group(1)
 			protocol = summary.split("/")[-1].strip().split(" ")
-			if protocol == "IPv":
-				protocol = "IPv6"
+			print protocol[0]
+			if re.search("IPv",protocol[0]):
+				protocol[0] = "IPv6"
 		else:
 			protocol = " "
 		hex_output = utils.hexdump2(pkt)
@@ -102,10 +103,14 @@ class Sniffer(object):
 			data["Source"] = pkt["IPv6"].src
 			data["Destination"] = pkt["IPv6"].dst
 			data["Length"] = pkt["IPv6"].plen
+		elif "ARP" in pkt:
+			data["Source"] = pkt["ARP"].psrc
+			data["Destination"] = pkt["ARP"].pdst
+			data["Length"] = pkt["ARP"].plen
 		else:
 			data["Source"] = "-"
 			data["Destination"] = "-"
-			# data["Length"] = 28
+			data["Length"] = 28
 			# data["Protocol"] =  protocol[0]
 		parsed_content = self.content_parser(content)
 		if "Raw" in parsed_content:
