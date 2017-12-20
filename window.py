@@ -127,7 +127,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		# devicesList,dic = linux.get_interfaces()
 		devicesList = []
 		print "devices"
-		print conf.iface
+		print type(conf.iface)
 		for item in devicesList:
 			self.listWidget.addItem(QtGui.QListWidgetItem(item))
 	
@@ -275,6 +275,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 				self.stackedWidget.setCurrentIndex(1)
 			self.clearTable()
 			print str(fileName)
+			self.sniffer = capture.Sniffer(window = window)
 			self.sniffer.load(str(fileName))
 
 	def clearTable(self):
