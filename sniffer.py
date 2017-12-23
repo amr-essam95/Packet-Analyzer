@@ -113,16 +113,28 @@ class Sniffer(object):
 			# data["Protocol"] =  protocol[0]
 		parsed_content = self.content_parser(content)
 		if "Raw" in parsed_content:
-			if re.search("GET|POST",parsed_content["Raw"]):
+			if re.search("GET|POST|HTTP",parsed_content["Raw"]):
 				data["Info"] = parsed_content["Raw"].split("=")[1].strip().strip("'")
-			data["Info"] = summary
+				temp = parsed_content["Raw"].split("=")[1].strip().strip("'").split('\\r\\n')
+				temp_string = ""
+				flag = True
+				for x in temp:
+					flag = False
+					temp_string += x
+					temp_string += "\n"
+				parsed_content["HTTP"] = temp_string
+				if flag:
+					temp_string = data["Info"]
+
+			else:
+				data["Info"] = summary
+				
 		else:
 			data["Info"] = summary
-		if "udp" in pkt:
-			if str(pkt["UDP"].dport).strip() == "ssdp":
-				print "-%s-" % str(pkt["UDP"].dport)
+		if "UDP" in pkt:
+			if str(pkt["UDP"].dport).strip() == "1900":
 				data["Protocol"] = "ssdp"
-		if "IP Option Router Alert" in pkt:
+		if re.search("^\d+.\d+.\d+.\d+",data["Protocol"]):
 			data["Protocol"] = "IGMP"
 		# r = re.search()
 		data["Hexa"]  = hex_output
