@@ -10,6 +10,28 @@ import scapy.all as scapy
 from scapy.all import conf
 # from scapy.arch import linux
 ####################################################################
+
+def get_int():
+	try:
+		import scapy.arch.windows as x
+		interfaces = x.get_windows_interfaces()
+		interfaces_list = []
+		interfaces_dic = {}
+		for interface in interfaces:
+			state,dev = x.dev_from_index2(interface['win_index'])
+			if state:
+				interfaces_list.append(interface['name'])
+				interfaces_dic[interface['name']] = dev
+		return interfaces_list,interfaces_dic
+	except:
+		pass
+	try:
+		from scapy.arch import linux
+		return linux.get_interfaces()
+	except:
+		print "Problem with OS"
+		sys.exit()
+
 class ThreadingClass(QtCore.QThread):
 	""" Threading example class
 	The run() method will be started and it will run in the background
@@ -125,9 +147,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 	def addDevicesToList(self):
 		devicesList = []
 		# devicesList,dic = linux.get_interfaces()
-		devicesList = []
-		print "devices"
-		print type(conf.iface)
+		devicesList,devicesdic = get_int()
 		for item in devicesList:
 			self.listWidget.addItem(QtGui.QListWidgetItem(item))
 	
@@ -306,9 +326,13 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		if buttonPressed =="ok":
 			sys.exit()
 #########################################################
-file_name = "xy"
+
+		# print (dir(conf.iface))
+		# print (conf.iface)
+	
 app = QtGui.QApplication(sys.argv)
 # ldev,dic_devices = linux.get_interfaces()
+ldev,dic_devices = get_int()
 list_of_packets = []
 app.setStyle('plastique')
 window = MyWindow()
@@ -316,6 +340,5 @@ window.show()
 
 app.exec_()
 ##########################################################
-
 
 
