@@ -306,13 +306,39 @@ def get_windows_if_list():
         query = exec_query(['Get-WmiObject', 'Win32_NetworkAdapter'],
                            ['Name', 'InterfaceIndex', 'InterfaceDescription',
                             'GUID', 'MacAddress', 'NetConnectionID'])
-    return [
+
+    x =  [
         iface for iface in
         (dict(zip(['name', 'win_index', 'description', 'guid', 'mac', 'netid'], line))
          for line in query)
         if is_interface_valid(iface)
     ]
+    return x
+def get_windows_interfaces():
+    """Returns windows interfaces."""
+    if not conf.prog.os_access:
+        return []
+    if is_new_release():
+        # This works only starting from Windows 8/2012 and up. For older Windows another solution is needed
+        # Careful: this is weird, but Get-NetAdaptater works like: (Name isn't the interface name)
+        # Name                      InterfaceDescription                    ifIndex Status       MacAddress             LinkSpeed
+        # ----                      --------------------                    ------- ------       ----------             ---------
+        # Ethernet                  Killer E2200 Gigabit Ethernet Contro...      13 Up           D0-50-99-56-DD-F9         1 Gbps
+        query = exec_query(['Get-NetAdapter'],
+                           ['InterfaceDescription', 'InterfaceIndex', 'Name',
+                            'InterfaceGuid', 'MacAddress', 'InterfaceAlias']) # It is normal that it is in this order
+    else:
+        query = exec_query(['Get-WmiObject', 'Win32_NetworkAdapter'],
+                           ['Name', 'InterfaceIndex', 'InterfaceDescription',
+                            'GUID', 'MacAddress', 'NetConnectionID'])
 
+    x =  [
+        iface for iface in
+        (dict(zip(['name', 'win_index', 'description', 'guid', 'mac', 'netid'], line))
+         for line in query)
+        if is_interface_valid(iface)
+    ]
+    return x
 def get_ip_from_name(ifname, v6=False):
     for descr, ipaddr in exec_query(['Get-WmiObject',
                                      'Win32_NetworkAdapterConfiguration'],
@@ -622,6 +648,16 @@ class NetworkInterfaceDict(UserDict):
             if isinstance(scapy.consts.LOOPBACK_INTERFACE, NetworkInterface):
                 return scapy.consts.LOOPBACK_INTERFACE
         raise ValueError("Unknown network interface index %r" % if_index)
+    def dev_from_index2(self, if_index):
+        """Return interface name from interface index"""
+        for devname, iface in six.iteritems(self):
+            if iface.win_index == str(if_index):
+                return True,iface
+        if str(if_index) == "1":
+            # Test if the loopback interface is set up
+            if isinstance(scapy.consts.LOOPBACK_INTERFACE, NetworkInterface):
+                return True,scapy.consts.LOOPBACK_INTERFACE
+        return False," "
 
     def remove_invalid_ifaces(self):
         """Remove all invalid interfaces"""
@@ -682,6 +718,9 @@ def dev_from_pcapname(pcap_name):
 def dev_from_index(if_index):
     """Return Windows adapter name for given Windows interface index"""
     return IFACES.dev_from_index(if_index)
+def dev_from_index2(if_index):
+    """Return Windows adapter name for given Windows interface index"""
+    return IFACES.dev_from_index2(if_index)
     
 def show_interfaces(resolve_mac=True):
     """Print list of available network interfaces"""
