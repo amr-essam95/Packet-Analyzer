@@ -65,7 +65,7 @@ class Sniffer(object):
 				current_key = r.group(1).strip()
 				content_dic[current_key] =  ""
 			else:
-				content_dic[current_key] += line.strip() + "\n"
+				content_dic[current_key] += line.strip() + "\n"				
 		return content_dic
 
 	def pkt_parser(self,pkt):
@@ -77,7 +77,6 @@ class Sniffer(object):
 		if r:
 			summary = r.group(1)
 			protocol = summary.split("/")[-1].strip().split(" ")
-			print protocol[0]
 			if re.search("IPv",protocol[0]):
 				protocol[0] = "IPv6"
 		else:
@@ -114,10 +113,18 @@ class Sniffer(object):
 			# data["Protocol"] =  protocol[0]
 		parsed_content = self.content_parser(content)
 		if "Raw" in parsed_content:
-			data["Info"] = parsed_content["Raw"].split("=")[1].strip().strip("'")
+			if re.search("GET|POST",parsed_content["Raw"]):
+				data["Info"] = parsed_content["Raw"].split("=")[1].strip().strip("'")
 			data["Info"] = summary
 		else:
 			data["Info"] = summary
+		if "udp" in pkt:
+			if str(pkt["UDP"].dport).strip() == "ssdp":
+				print "-%s-" % str(pkt["UDP"].dport)
+				data["Protocol"] = "ssdp"
+		if "IP Option Router Alert" in pkt:
+			data["Protocol"] = "IGMP"
+		# r = re.search()
 		data["Hexa"]  = hex_output
 		data["Description"] = parsed_content
 		return data
