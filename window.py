@@ -106,6 +106,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 		#self.showPacketDescription(1)
 ######################################################
 	def startCaptureBtnClicked(self,btn):
+		self.pauseCaptureBtn.setEnabled(False)
 		if(self.stackedWidget.currentIndex()==0):
 			#assure that connection is selected and send it to thread
 			if self.listWidget.currentItem()==None :
@@ -119,7 +120,7 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.stackedWidget.setCurrentIndex(1)
 			self.startCaptureBtn.setEnabled(False)
 			self.stopCaptureBtn.setEnabled(True)
-			self.pauseCaptureBtn.setEnabled(True)
+			# self.pauseCaptureBtn.setEnabled(True)
 		else:
 			if(self.stopped==True):
 				#message to confirm that he will lose the data if he didn't save session
@@ -133,13 +134,13 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 				msg.buttonClicked.connect(self.startNewCapture)
 				retval = msg.exec_()
 				if retval==QtGui.QMessageBox.Ok:
-					self.pauseCaptureBtn.setEnabled(True)
+					# self.pauseCaptureBtn.setEnabled(True)
 					self.startCaptureBtn.setEnabled(False)
 					self.stopCaptureBtn.setEnabled(True)
 					self.startNewCapture("Ok")
 				return
 			self.loadBtn.setEnabled(False)
-			self.pauseCaptureBtn.setEnabled(True)
+			# self.pauseCaptureBtn.setEnabled(True)
 			self.startCaptureBtn.setEnabled(False)
 			self.stopCaptureBtn.setEnabled(True)
 			self.startCapture()
