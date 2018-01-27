@@ -296,7 +296,10 @@ class MyWindow(QtGui.QMainWindow,Ui_MainWindow):    # any super class is okay
 			self.clearTable()
 			print str(fileName)
 			self.sniffer = capture.Sniffer(window = window)
-			self.sniffer.load(str(fileName))
+			try:
+				self.sniffer.load(str(fileName))
+			except:
+				print "Error While loading"
 
 	def clearTable(self):
 		self.packetList=[]
